@@ -99,11 +99,11 @@
                 <img class="ref-img" src="static/bestia.jpeg" alt="Bestia"  style="width:200px;height:200px;">
                 <img class="ref-img" src="static/neblina.jpeg" alt="Neblina" style="grid-row:1;grid-column:2;">
                 <img class="ref-img" src="static/roca.jpeg" alt="Roca" style="grid-row:1;grid-column:3;">
-                <!-- Segunda fila: solo la imagen central -->
+                
                 <div></div>
                 <img class="ref-img" src="static/flor.jpeg" alt="Flor" style="grid-row:2;grid-column:2;">
                 <div></div>
-                <!-- Tercera fila -->
+                
                 <img class="ref-img" src="static/agua.jpeg" alt="Agua" style="grid-row:3;grid-column:1;">
                 <img class="ref-img" src="static/amor.jpeg" alt="Amor" style="grid-row:3;grid-column:2;">
                 <img class="ref-img" src="static/solar.jpeg" alt="Solar" style="grid-row:3;grid-column:3;">
@@ -169,17 +169,17 @@
         document.getElementById('resultado').textContent = '';
         document.getElementById('personaje-img').src = "static/imagen.png";
 
-        // Reset the text content of the personaje header
+        
         document.querySelector('.contenido-der h2').textContent = "Personaje";
 
-        // Remove the reference image if it exists
+        
         const referenciaImg = document.querySelector('.contenido-der img[alt="Referencia"]');
         if (referenciaImg) {
             referenciaImg.remove();
         }
     };
 
-    // Mapeo de predicción a imagen de personaje
+    
     const personajeMap = {
         'respiracion de la bestia': 'static/InosukeHashibira.png',
         'respiracion de la neblina': 'static/MuichiroTokito.png',
@@ -212,7 +212,7 @@
                     document.querySelector('.contenido-der h2').textContent =
                         `Hola soy ${personajeName}, gracias por escoger la ${data.prediccion}`;
                     
-                    // Add the reference image below the text
+                    
                     const referenciaImg = document.createElement('img');
                     referenciaImg.src = `static/${data.prediccion.split(' ').pop().toLowerCase()}.jpeg`;
                     referenciaImg.alt = "Referencia";

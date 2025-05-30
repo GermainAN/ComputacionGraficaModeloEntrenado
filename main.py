@@ -19,11 +19,11 @@ indice_a_respiracion = {
     6: 'respiracion de la flor'
 }
 
-ESCALA_MODELO = 28  # Ajusta si tu modelo usa otro tamaño
+ESCALA_MODELO = 28  
 
 app = Flask(__name__)
 
-# Ruta para servir el frontend
+
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
