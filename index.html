@@ -200,13 +200,13 @@
         })
         .then(res => res.json())
         .then (data => {
-            if (data.prediccion && data.confianza >= 0.95) {
+            if (data.prediccion && data.confianza >= 0.90) {
                 const personajeImgPath = personajeMap[data.prediccion];
                 const personajeName = personajeImgPath
                     ? personajeImgPath.split('/').pop().split('.')[0].replace(/([A-Z])/g, ' $1').trim()
                     : "Personaje desconocido";
                 document.getElementById('resultado').textContent =
-                    `Predicción: ${data.prediccion} (confianza: ${(data.confianza*100).toFixed(2)}%)`;
+                    `Pre    dicción: ${data.prediccion} (confianza: ${(data.confianza*100).toFixed(2)}%)`;
                 if (personajeImgPath) {
                     document.getElementById('personaje-img').src = personajeImgPath;
                     document.querySelector('.contenido-der h2').textContent =
