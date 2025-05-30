@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clasificador de Respiraciones</title>
+    <style>
+        body { 
+            background-image: url('/static/Fondofondo.jpg');
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            min-height: 100vh; 
+        }
+        #contenedor {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: stretch; 
+            min-height: 100vh;
+        }
+        #col-izq, #col-der {
+            height: 100vh; 
+            box-sizing: border-box;
+        }
+        #col-izq {
+             background: rgba(34, 40, 49, 0.82);
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #col-izq .contenido-izq {
+            padding: 30px 0px;
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #referencias {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+            width: 100%;
+            justify-items: center;
+            align-items: center;
+        }
+        .ref-img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover; 
+            border: 1px solid #aaa;
+            background: transparent;
+        }
+    
+        .centrado-col-izq {
+            color: white;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #canvas { border: 2px solid #333; background: #fff; cursor: crosshair; margin-top: 20px; }
+        #botones { margin: 20px; }
+        #resultado { font-size: 1.3em; margin-top: 20px; }
+        #col-der {
+             background: rgba(148, 148, 150, 0.82);
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        #col-der .contenido-der {
+            padding: 30px 20px;
+            width:80%;;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #personaje-img {
+            width: 555px;
+            height: 816px;
+            object-fit: cover;
+            border: 2px solid #333;
+            background: transparent; 
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<div id="contenedor">
+    <div id="col-izq">
+        <div class="contenido-izq">
+            <div id="referencias">
+                <img class="ref-img" src="static/bestia.jpeg" alt="Bestia"  style="width:200px;height:200px;">
+                <img class="ref-img" src="static/neblina.jpeg" alt="Neblina" style="grid-row:1;grid-column:2;">
+                <img class="ref-img" src="static/roca.jpeg" alt="Roca" style="grid-row:1;grid-column:3;">
+                <!-- Segunda fila: solo la imagen central -->
+                <div></div>
+                <img class="ref-img" src="static/flor.jpeg" alt="Flor" style="grid-row:2;grid-column:2;">
+                <div></div>
+                <!-- Tercera fila -->
+                <img class="ref-img" src="static/agua.jpeg" alt="Agua" style="grid-row:3;grid-column:1;">
+                <img class="ref-img" src="static/amor.jpeg" alt="Amor" style="grid-row:3;grid-column:2;">
+                <img class="ref-img" src="static/solar.jpeg" alt="Solar" style="grid-row:3;grid-column:3;">
+            </div>
+            <div class="centrado-col-izq">
+                <h2>Dibuja una respiración</h2>
+                <canvas id="canvas" width="200" height="200"></canvas>
+                <div id="botones">
+                    <button id="limpiar">Limpiar</button>
+                    <button id="predecir">Predecir</button>
+                </div>
+                <div id="resultado"></div>
+            </div>
+        </div>
+    </div>
+    <div id="col-der">
+        <div class="contenido-der">
+            <h2>Personaje</h2>
+            <img id="personaje-img" src="static/imagen.png" alt="Personaje">
+        </div>
+    </div>
+</div>
+<script>
+    // --- Dibujo en canvas ---
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let mousePressed = false, lastX = 0, lastY = 0;
+
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    canvas.addEventListener('mousedown', function(e) {
+        mousePressed = true;
+        const rect = canvas.getBoundingClientRect();
+        lastX = e.clientX - rect.left;
+        lastY = e.clientY - rect.top;
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+        if (mousePressed) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            ctx.beginPath();
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 11;
+            ctx.lineJoin = "round";
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.closePath();
+            ctx.stroke();
+            lastX = x; lastY = y;
+        }
+    });
+
+    canvas.addEventListener('mouseup', () => mousePressed = false);
+    canvas.addEventListener('mouseleave', () => mousePressed = false);
+
+    document.getElementById('limpiar').onclick = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('resultado').textContent = '';
+        document.getElementById('personaje-img').src = "static/imagen.png";
+
+        // Reset the text content of the personaje header
+        document.querySelector('.contenido-der h2').textContent = "Personaje";
+
+        // Remove the reference image if it exists
+        const referenciaImg = document.querySelector('.contenido-der img[alt="Referencia"]');
+        if (referenciaImg) {
+            referenciaImg.remove();
+        }
+    };
+
+    // Mapeo de predicción a imagen de personaje
+    const personajeMap = {
+        'respiracion de la bestia': 'static/InosukeHashibira.png',
+        'respiracion de la neblina': 'static/MuichiroTokito.png',
+        'respiracion de la roca': 'static/GyomeiHimejima.png',
+        'respiracion del agua': 'static/GiyuTomioka.png',
+        'respiracion del amor': 'static/MitsuriKanroji.png',
+        'respiracion solar': 'static/YoriichiTsugikuni.png',
+        'respiracion de la flor': 'static/KanaoTsuyuri.png'
+    };
+
+    document.getElementById('predecir').onclick = function() {
+        const dataURL = canvas.toDataURL('image/png');
+        document.getElementById('resultado').textContent = 'Procesando...';
+        fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: dataURL })
+        })
+        .then(res => res.json())
+        .then (data => {
+            if (data.prediccion && data.confianza >= 0.95) {
+                const personajeImgPath = personajeMap[data.prediccion];
+                const personajeName = personajeImgPath
+                    ? personajeImgPath.split('/').pop().split('.')[0].replace(/([A-Z])/g, ' $1').trim()
+                    : "Personaje desconocido";
+                document.getElementById('resultado').textContent =
+                    `Predicción: ${data.prediccion} (confianza: ${(data.confianza*100).toFixed(2)}%)`;
+                if (personajeImgPath) {
+                    document.getElementById('personaje-img').src = personajeImgPath;
+                    document.querySelector('.contenido-der h2').textContent =
+                        `Hola soy ${personajeName}, gracias por escoger la ${data.prediccion}`;
+                    
+                    // Add the reference image below the text
+                    const referenciaImg = document.createElement('img');
+                    referenciaImg.src = `static/${data.prediccion.split(' ').pop().toLowerCase()}.jpeg`;
+                    referenciaImg.alt = "Referencia";
+                    referenciaImg.style.width = "100px";
+                    referenciaImg.style.height = "100px";
+                    referenciaImg.style.border = "1px solid #333";
+                    referenciaImg.style.marginTop = "10px";
+                    document.querySelector('.contenido-der').appendChild(referenciaImg);
+                } else {
+                    document.getElementById('personaje-img').src = "static/imagen.png";
+                    document.querySelector('.contenido-der h2').textContent = "Personaje";
+                }
+            } else {
+                document.getElementById('resultado').textContent =
+                    `Confianza insuficiente para una predicción válida. (confianza: ${(data.confianza*100).toFixed(2)}%)`;
+                document.getElementById('personaje-img').src = "static/imagen.png";
+                document.querySelector('.contenido-der h2').textContent = "Personaje";
+            }
+        })
+        .catch(() => {
+            document.getElementById('resultado').textContent = 'Error de conexión con el servidor.';
+            document.getElementById('personaje-img').src = "static/imagen.png";
+            document.querySelector('.contenido-der h2').textContent = "Personaje";
+        });
+    };
+</script>
+</body>
+</html>
