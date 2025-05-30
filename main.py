@@ -5,10 +5,10 @@ import io
 import base64
 from tensorflow.keras.models import load_model
 
-# Cargar el modelo entrenado
+
 modelo = load_model("modelo_kimetsu.h5")
 
-# Diccionario para convertir índices a respiraciones
+
 indice_a_respiracion = {
     0: 'respiracion de la bestia',
     1: 'respiracion de la neblina',
